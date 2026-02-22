@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Vandal-Bomber</title>
+<style>
+body {
+  background: #0d1117;
+  color: #c9d1d9;
+  font-family: monospace;
+  text-align: center;
+  padding: 40px;
+}
+.box {
+  background: #161b22;
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 700px;
+  margin: auto;
+  box-shadow: 0 0 20px #000;
+}
+h1 {
+  color: #58a6ff;
+}
+pre {
+  background: #0d1117;
+  padding: 15px;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+button {
+  background: #238636;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+button:hover {
+  background: #2ea043;
+}
+footer {
+  margin-top: 30px;
+  color: #8b949e;
+}
+</style>
+</head>
+<body>
+
+<div class="box">
+  <h1>💣 Vandal-Bomber</h1>
+  <p>Powerful Python Tool – Simple, Fast, Open Source</p>
+
+  <h3>Run Command</h3>
+  <pre id="cmd">python main.py</pre>
+  <button onclick="copy()">Copy Command</button>
+
+  <h3>Installation</h3>
+  <pre>
+git clone https://github.com/sjsjsbsjsbsbsbsbsb-lab/Vandal-Bomber.git
+cd Vandal-Bomber
+  </pre>
+
+  <footer>
+    Educational use only • Open Source
+  </footer>
+</div>
+
+<script>
+function copy() {
+  navigator.clipboard.writeText("python main.py");
+  alert("Copied!");
+}
+</script>
+
+</body>
+</html>
