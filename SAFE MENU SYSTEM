@@ -1,0 +1,88 @@
+"""
+Part 5 – Menu System & Orchestration (SAFE MODE)
+"""
+
+import os
+import sys
+import time
+from rich.console import Console
+from rich.panel import Panel
+from rich.align import Align
+
+console = Console()
+
+def clear_screen():
+    os.system("clear" if os.name != "nt" else "cls")
+
+def vandal_banner():
+    banner = """
+██▒   █▓ ▄▄▄       ███▄    █ ▓█████▄ ▄▄▄       ██▓
+▓██░   █▒▒████▄     ██ ▀█   █ ▒██▀ ██▒████▄    ▓██▒
+ ▓██  █▒░▒██  ▀█▄  ▓██  ▀█ ██▒░██   █▒██  ▀█▄  ▒██░
+  ▒██ █░░░██▄▄▄▄██ ▓██▒  ▐▌██▒░▓█▄   ▌██▄▄▄▄██ ▒██░
+   ▒▀█░   ▓█   ▓██▒▒██░   ▓██░░▒████▓ ▓█   ▓██▒░██████▒
+   ░ ▐░   ▒▒   ▓▒█░░ ▒░   ▒ ▒  ▒▒▓  ▒ ▒▒   ▓▒█░░ ▒░▓  ░
+   ░ ░░    ▒   ▒▒ ░░ ░░   ░ ▒░ ░ ▒  ▒  ▒   ▒▒ ░░ ░ ▒  ░
+     ░░    ░   ▒      ░   ░ ░  ░ ░  ░  ░   ▒     ░ ░
+      ░        ░  ░         ░    ░         ░  ░    ░
+     ░                              ░
+
+            V A N D A L   S C A N N E R
+"""
+    console.print(Panel(Align.center(banner), border_style="red"))
+
+def main_menu():
+    console.print("\n[1] Quick Scan")
+    console.print("[2] Full Scan")
+    console.print("[3] Web Scan")
+    console.print("[4] Root Scan (Advanced)")
+    console.print("[0] Exit\n")
+    return input("Select option > ")
+
+def run_quick():
+    console.print("[yellow]Running Quick Scan...[/yellow]")
+    time.sleep(1)
+    console.print("[green]Quick Scan Finished[/green]")
+
+def run_full():
+    console.print("[yellow]Running Full Scan...[/yellow]")
+    time.sleep(1)
+    console.print("[green]Full Scan Finished[/green]")
+
+def run_web():
+    console.print("[yellow]Running Web Scan...[/yellow]")
+    time.sleep(1)
+    console.print("[green]Web Scan Finished[/green]")
+
+def run_root():
+    console.print("[red]Root Scan requires elevated privileges[/red]")
+    time.sleep(1)
+    console.print("[green]Root Scan Finished (Simulation)[/green]")
+
+def main():
+    clear_screen()
+    vandal_banner()
+
+    while True:
+        choice = main_menu()
+
+        if choice == "1":
+            run_quick()
+        elif choice == "2":
+            run_full()
+        elif choice == "3":
+            run_web()
+        elif choice == "4":
+            run_root()
+        elif choice == "0":
+            console.print("[cyan]Exit[/cyan]")
+            break
+        else:
+            console.print("[red]Invalid Option[/red]")
+
+        input("\nPress Enter to continue...")
+        clear_screen()
+        vandal_banner()
+
+if __name__ == "__main__":
+    main()
