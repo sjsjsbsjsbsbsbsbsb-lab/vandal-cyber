@@ -1,0 +1,93 @@
+
+
+import socket
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import subprocess
+import time
+import platform
+
+# Global results dictionary
+scan_results = {
+    'live_hosts': [],
+    'open_ports': {},
+    'services': {}
+}
+
+def ping_host(ip, timeout=1):
+    """Ping host using system ping command"""
+    param = '-n' if platform.system().lower()=='windows' else '-c'
+    try:
+        result = subprocess.run(['ping', param, '1', '-W', str(timeout), ip],
+                                stdout=subprocess.DEVNULL)
+        return result.returncode == 0
+    except:
+        return False
+
+def tcp_connect_scan(ip, ports, timeout=1):
+    """TCP connect scan on a list of ports"""
+    open_ports = []
+    for port in ports:
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(timeout)
+            result = sock.connect_ex((ip, port))
+            if result == 0:
+                open_ports.append(port)
+            sock.close()
+        except:
+            continue
+    return open_ports
+
+def syn_scan(ip, ports, timeout=1):
+    """SYN scan placeholder (requires root for raw sockets)"""
+    open_ports = []
+    try:
+        import scapy.all as scapy
+        for port in ports:
+            syn_pkt = scapy.IP(dst=ip)/scapy.TCP(dport=port, flags='S')
+            resp = scapy.sr1(syn_pkt, timeout=timeout, verbose=0)
+            if resp and resp.haslayer(scapy.TCP) and resp.getlayer(scapy.TCP).flags == 0x12:
+                open_ports.append(port)
+    except:
+        pass
+    return open_ports
+
+def aggressive_ping_sweep(network, max_threads=50):
+    """Ping sweep a whole subnet"""
+    from ipaddress import ip_network
+    hosts_up = []
+    ips = [str(ip) for ip in ip_network(network).hosts()]
+    def worker(ip):
+        if ping_host(ip):
+            hosts_up.append(ip)
+    with ThreadPoolExecutor(max_workers=max_threads) as executor:
+        executor.map(worker, ips)
+    return hosts_up
+
+def threaded_port_scan(hosts, ports, scan_type='tcp', max_threads=100):
+    """Scan multiple hosts in parallel"""
+    results = {}
+    def scan_worker(ip):
+        if scan_type=='tcp':
+            open_ports = tcp_connect_scan(ip, ports)
+        elif scan_type=='syn':
+            open_ports = syn_scan(ip, ports)
+        else:
+            open_ports = []
+        results[ip] = open_ports
+    with ThreadPoolExecutor(max_workers=max_threads) as executor:
+        executor.map(scan_worker, hosts)
+    return results
+
+def resolve_hostnames(hosts, max_threads=50):
+    """Resolve hostnames for a list of IPs"""
+    resolved = {}
+    def worker(ip):
+        try:
+            resolved[ip] = socket.gethostbyaddr(ip)[0]
+        except:
+            resolved[ip] = "Unknown"
+    with ThreadPoolExecutor(max_workers=max_threads) as executor:
+        executor.map(worker, hosts)
+    return resolved
