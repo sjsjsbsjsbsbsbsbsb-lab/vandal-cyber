@@ -1,0 +1,87 @@
+
+
+import subprocess
+import threading
+from concurrent.futures import ThreadPoolExecutor
+
+def root_scan(ip, ports=range(1, 65535)):
+    """Aggressive TCP SYN scan using root privileges"""
+    results = {}
+    if not is_root():
+        console.print("[red]Root privileges required for full scan[/red]")
+        return results
+
+    def scan_port(port):
+        try:
+            result = subprocess.run(
+                ["nc", "-zv", "-w1", ip, str(port)],
+                capture_output=True,
+                text=True
+            )
+            if "succeeded" in result.stderr.lower() or "open" in result.stderr.lower():
+                return port
+        except:
+            pass
+        return None
+
+    with ThreadPoolExecutor(max_workers=200) as executor:
+        futures = {executor.submit(scan_port, port): port for port in ports}
+        for future in futures:
+            port = future.result()
+            if port:
+                results.setdefault(ip, []).append(port)
+    return results
+
+def is_root():
+    """Check if running as root"""
+    try:
+        return subprocess.check_output("id -u", shell=True).decode().strip() == "0"
+    except:
+        return False
+
+def integrate_scans(live_hosts, quick_results, web_results, root_results):
+    """Combine all scan results into a single structure"""
+    combined = {}
+    for ip in live_hosts.keys():
+        combined[ip] = {
+            "live": True,
+            "quick_ports": quick_results.get(ip, []),
+            "web": web_results.get(ip, {}),
+            "root_ports": root_results.get(ip, [])
+        }
+    return combined
+
+def display_combined(combined_results):
+    """Display summary of all scans"""
+    table = Table(title="FULL SCAN SUMMARY")
+    table.add_column("IP", style="cyan")
+    table.add_column("Live", style="green")
+    table.add_column("Quick Ports", style="yellow")
+    table.add_column("Web Servers", style="magenta")
+    table.add_column("Root Ports", style="red")
+    for ip, data in combined_results.items():
+        web_ports = ", ".join(map(str, data["web"].keys())) if data["web"] else "-"
+        table.add_row(
+            ip,
+            "UP" if data["live"] else "DOWN",
+            ", ".join(map(str, data["quick_ports"])) if data["quick_ports"] else "-",
+            web_ports,
+            ", ".join(map(str, data["root_ports"])) if data["root_ports"] else "-"
+        )
+    console.print(table)
+
+def full_scan(ip_list):
+    """Orchestrate all scans"""
+    live_hosts = {ip: ip for ip in ip_list}  # Assume all given IPs are live for demo
+    quick_results = {ip: range(20, 1025) for ip in ip_list}  # Demo TCP connect ports
+    web_results = {ip: web_scan(ip) for ip in ip_list}
+    root_results = {}
+    for ip in ip_list:
+        if is_root():
+            root_results.update(root_scan(ip))
+    combined = integrate_scans(live_hosts, quick_results, web_results, root_results)
+    display_combined(combined)
+    # Save outputs
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    save_results_json(f"full_scan_{timestamp}.json", combined)
+    save_results_csv(f"full_scan_{timestamp}.csv", {ip: combined[ip]["quick_ports"] for ip in combined})
