@@ -1,0 +1,81 @@
+
+
+import requests
+import re
+import csv
+import json
+from rich.table import Table
+from rich.console import Console
+from datetime import datetime
+
+console = Console()
+
+def service_version_scan(ip, ports):
+    """Scan service banners for open ports"""
+    services = {}
+    for port in ports:
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(2)
+            sock.connect((ip, port))
+            sock.send(b"HEAD / HTTP/1.0\r\n\r\n")
+            data = sock.recv(1024).decode(errors='ignore')
+            sock.close()
+            banner = data.split("\r\n")[0] if data else "Unknown"
+            services[port] = banner
+        except:
+            services[port] = "Unknown"
+    return services
+
+def web_scan(ip, ports=[80, 443, 8080, 8443, 8000, 3000]):
+    """Scan common web ports for headers and titles"""
+    web_results = {}
+    for port in ports:
+        try:
+            scheme = "http" if port in [80, 8000, 8080, 3000] else "https"
+            url = f"{scheme}://{ip}:{port}"
+            resp = requests.get(url, timeout=5, verify=False)
+            headers = dict(resp.headers)
+            title_match = re.search(r"<title[^>]*>([^<]+)", resp.text, re.IGNORECASE)
+            title = title_match.group(1)[:50] if title_match else "No Title"
+            web_results[port] = {"url": url, "server": headers.get("Server", "Unknown"), "title": title}
+        except:
+            continue
+    return web_results
+
+def display_live_hosts(live_hosts):
+    table = Table(title="LIVE HOSTS")
+    table.add_column("IP", style="cyan")
+    table.add_column("Hostname", style="green")
+    for ip, hostname in live_hosts.items():
+        table.add_row(ip, hostname)
+    console.print(table)
+
+def display_open_ports(scan_results):
+    table = Table(title="OPEN PORTS")
+    table.add_column("IP", style="cyan")
+    table.add_column("Ports", style="yellow")
+    for ip, ports in scan_results.items():
+        table.add_row(ip, ", ".join(map(str, ports)) if ports else "-")
+    console.print(table)
+
+def display_web_services(web_results):
+    table = Table(title="WEB SERVICES")
+    table.add_column("Host", style="cyan")
+    table.add_column("Port", style="yellow")
+    table.add_column("Server", style="green")
+    table.add_column("Title", style="magenta")
+    for ip, ports in web_results.items():
+        for port, info in ports.items():
+            table.add_row(ip, str(port), info["server"], info["title"])
+    console.print(table)
+
+def save_results_json(filename, data):
+    with open(filename, "w") as f:
+        json.dump(data, f, indent=2)
+
+def save_results_csv(filename, data):
+    with open(filename, "w", newline='') as f:
+        writer = csv.writer(f)
+        for ip, ports in data.items():
+            writer.writerow([ip, ",".join(map(str, ports))])
