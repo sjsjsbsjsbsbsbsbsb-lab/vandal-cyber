@@ -1,6 +1,4 @@
-"""
-Part 5 – Menu System & Orchestration (SAFE MODE)
-"""
+
 
 import os
 import sys
