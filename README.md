@@ -1,5 +1,3 @@
-# Vandal-Bomber
-
 # Features
  یک فریم‌ورک پنتست که ابزارهایی برای اسکن شبکه (nmap، ping sweep)، کشف ساب‌دامین، تحلیل DNS، OSINT و WHOIS، و بررسی وب (SQLi، XSS، دایرکتوری دارد 
 
