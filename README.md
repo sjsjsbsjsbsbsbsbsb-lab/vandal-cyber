@@ -69,6 +69,10 @@
 
 # جهت نصب سریع ابزار های ترموکس و کالی لینوکس
 
+git clone https://github.com/sjsjsbsjsbsbsbsbsb-lab/vandal-cyber
+
+cd vandal-cyber
+
 python install.py
 
 # Run
