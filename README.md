@@ -9,45 +9,65 @@
 
 # termux
 
-pkg update && pkg upgrade
-pkg install python
-pkg install nmap
-pkg install dnsutils
-pkg install whois
-pkg install git
-pkg install curl
-pkg install clang
-pkg install make
-pkg install openssl
-pkg install libffi
-pkg install coreutils
+1. pkg update && pkg upgrade
+
+2. pkg install python
+
+3. pkg install nmap
+
+4. pkg install dnsutils
+
+5. pkg install whois
+
+6. pkg install git
+
+7. pkg install curl
+
+8. pkg install clang
+
+9. pkg install make
+
+10. pkg install openssl
+
+11. pkg install libffi
+
+12. pkg install coreutils
 
 # kali linux
 
-sudo apt update && sudo apt upgrade
-sudo apt install python3
-sudo apt install nmap
-sudo apt install dnsutils
-sudo apt install whois
-sudo apt install git
-sudo apt install curl
-sudo apt install build-essential
-sudo apt install openssl
-sudo apt install libffi-dev
+1. sudo apt update && sudo apt upgrade
+
+2. sudo apt install python3
+
+3. sudo apt install nmap
+
+4. sudo apt install dnsutils
+
+5. sudo apt install whois
+
+6. sudo apt install git
+
+7. sudo apt install curl
+
+8. sudo apt install build-essential
+
+9. sudo apt install openssl
+
+10. sudo apt install libffi-dev
 
 # Modules for both ( for Kali Linux and Termux )
 
-pip install requests
-pip install urllib3
-pip install colorama
-pip install python-nmap
-pip install scapy
-pip install prettytable
+1. pip install requests
 
-# Install the tool
+2. pip install urllib3
 
-sudo apt install sqlmap metasploit-framework gobuster hashcat
-sudo apt install sublist3r theharvester
+3. pip install colorama
+
+4. pip install python-nmap
+
+5. pip install scapy
+
+6. pip install prettytable
 
 # Run
 
