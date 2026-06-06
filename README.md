@@ -67,7 +67,11 @@
 
 6. pip install prettytable
 
-# Run
+# جهت نصب سریع ابزار های ترموکس و کالی لینوکس
+
+python install.py
+
+#Run
 
 git clone https://github.com/sjsjsbsjsbsbsbsbsb-lab/vandal-cyber
 
