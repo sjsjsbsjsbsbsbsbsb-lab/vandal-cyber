@@ -71,7 +71,7 @@
 
 python install.py
 
-#Run
+# Run
 
 git clone https://github.com/sjsjsbsjsbsbsbsbsb-lab/vandal-cyber
 
