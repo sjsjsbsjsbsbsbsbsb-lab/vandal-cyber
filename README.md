@@ -73,7 +73,7 @@ git clone https://github.com/sjsjsbsjsbsbsbsbsb-lab/vandal-cyber
 
 cd vandal-cyber
 
-python install.py
+python ina.py
 
 # Run
 
